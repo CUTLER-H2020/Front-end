@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="icon" href="images/cutler.png">
+        <title>Home</title>
+        <meta charset="utf-8">
+         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+        <style type="text/css">
+            body {
+                background-color:#2b3e50;
+                overflow-y: scroll;
+                scrollbar-width: none; /* Firefox */
+                -ms-overflow-style: none;  /* IE 10+ */
+            }
+            body::-webkit-scrollbar { /* WebKit */
+                width: 0;
+                height: 0;
+            }
+
+            #logo {
+                background-color: #f9f9f9;
+                width: 100%;
+                text-align: center;
+                position:fixed;
+                top:0;
+                height: 50%;
+            }
+            #bottom {
+              position:fixed;
+              height: 50%;
+              bottom:0;
+              width: 100%;
+            }
+            img {
+                margin-top:2%;  
+                margin-bottom:1%; 
+                width:10%;
+            }
+            .container {
+                margin-top: 5%; 
+                width:100%;
+                position: fixed;
+            }
+            
+            .btn-default {
+              margin-left: 5%;
+            }
+            form {
+                margin-left: 20%;
+            }
+
+            p {
+                color: white;
+            }
+
+            #loginform {
+                width:30%;
+                float:left;
+                margin-left:5%;
+            }
+            .footer{
+                position: fixed;
+                left: 0;
+                bottom: 0;
+                width: 100%;
+                margin-top: 5%; 
+                text-align: center;
+            }
+        </style>
+        
+        <script>
+
+        </script>  
+    </head>    
+    <body>
+        <div id="logo">
+            <img src="images/cutler.png">
+            <p style="margin-top:5%; color:black; font-size: 20px; font-family:sans-serif; "><b>CUTLER</b></p>
+            <p style="margin-top:2%; color:black; font-size: 15px; font-family:sans-serif; ">Coastal Urban Development Through the Lenses of Resiliency</p>
+        </div>
+        
+        <div id="bottom">
+            <div class="container">
+              <form method="post" action="login"> 
+                <div class="form-group">
+                  <input type="input" id="loginform" class="form-control" placeholder="Username" name="username" autocomplete="off">
+                </div>
+                <div class="form-group">
+                  <input type="password" id="loginform" class="form-control" placeholder="Password" name="password">
+                </div>
+                <button type="submit" class="btn btn-default">Login</button>
+              </form>
+              <button style="margin-left:45%; margin-top: 5%;  bottom: 0" class="btn btn-default btn-s" data-toggle="modal" data-target="#forgot">Forgot Password?</button></p>
+            </div>
+            <div class="footer">
+                <img src="images/horizon2020_logo.jpg" >
+                <p  style="font-size: 10px;">This project has received funding from the European Union’s Horizon 2020 research and innovation programme under grant agreement No 770469.</p>
+            </div>
+        </div>
+      
+      <div class="modal fade" id="forgot" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+                <h4 class="modal-title custom_align" id="Heading">Forgot Password</h4>
+              </div>
+              
+              <div class="modal-body">
+                <form method="post" enctype="multipart/form-data" action="forgot" style="margin-left:0;">
+                   <div class="form-group">
+                    <label for="policyName">Username:</label>
+                    <input type="input" class="form-control" placeholder="" name="username" autocomplete="off">
+                  </div>
+                  <div class="form-group">
+                    <label for="email">E-mail:</label>
+                    <input type="input" class="form-control" placeholder="" name="email" autocomplete="off">
+                  </div>
+                  <p style="color:black; text-align:center; opacity:0.6">*Your new password will be sent to your email. Please change your password immediately!</p>
+
+                  </div>
+                  
+                  <button type="submit" class="btn btn-success" style="border-color: #5DBCD2; background-color: #5DBCD2; width: 50%; margin-left:25%; margin-bottom:5%;">Regenerate</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+    </body>
+</html>

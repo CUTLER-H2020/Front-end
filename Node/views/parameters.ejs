@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="icon" href="images/cutler.png">
+        <title>Parameters</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.7.0/css/all.css' integrity='sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ' crossorigin='anonymous'>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script src="/javascripts/myScripts.js"></script>
+
+        <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+
+        <style type="text/css">
+            .navbar-inverse{
+              background-color: #2b3e50;
+            }
+            .btn-default{
+              background-color: #337ab7;
+              color:white;
+            }
+            .container-fluid ul.navbar-nav>li>a {
+                color: white;
+            }   
+            .container-fluid ul.navbar-nav>li>a:hover {
+                color: black;
+            }   
+            .container {
+              width:100%;
+            }
+            li{
+              text-align: center;
+            }
+            .wrapper{
+              width:70%;
+              margin-top: 100px;
+            }
+            @media(max-width:992px){
+             .wrapper{
+              width:100%;
+            } 
+            }
+            .panel-heading {
+              padding: 0;
+              border:0;
+            }
+            .panel-title>a, .panel-title>a:active{
+              display:block;
+              padding:15px;
+              color:white;
+              font-size:16px;
+              font-weight:bold;
+              text-transform:uppercase;
+              letter-spacing:1px;
+              word-spacing:3px;
+              text-decoration:none;
+              background-color: #2b3e50;
+            }
+            .panel-heading  a:before {
+               font-family: 'Glyphicons Halflings';
+               content: "\e114";
+               float: right;
+               transition: all 0.5s;
+            }
+            .panel-heading.active a:before {
+              -webkit-transform: rotate(180deg);
+              -moz-transform: rotate(180deg);
+              transform: rotate(180deg);
+            } 
+        </style>
+        
+        <script>       
+        window.onload=function(){
+           role=<%- JSON.stringify(role) %>;
+                if(role=="designer"){
+                  document.getElementById("users").style.visibility = "hidden";
+                }
+        } 
+
+          $('.panel-collapse').on('show.bs.collapse', function () {
+            $(this).siblings('.panel-heading').addClass('active');
+          });
+
+          $('.panel-collapse').on('hide.bs.collapse', function () {
+            $(this).siblings('.panel-heading').removeClass('active');
+          });
+        </script>
+    </head>    
+    <body>
+      <nav class="navbar navbar-inverse">
+          <div class="container-fluid">
+            <ul class="nav navbar-nav">
+              <li><a href="policies" ><span class="glyphicon glyphicon-wrench"></span> Policies</a></li>
+              <li><a href="steps"><span class="glyphicon glyphicon-list"></span> Steps</a></li>
+              <li><a href="parameters"><span class="glyphicon glyphicon-search"></span> Parameters</a></li>
+              <li style="margin-left: 300px"><img src="images/<%=img %>" style="margin-top:5px; height:40px;" class="img-responsive"></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li id="users"><a href="users"><span class="glyphicon glyphicon-cog"></span> Users</a></li>
+              <li><a href="profile"><span class="glyphicon glyphicon-user"></span> <%=id %></a></li>
+              <li><a href="logout" onclick="clearLocal()"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+            </ul>
+          </div>
+        </nav>
+
+       
+<div class="wrapper center-block">
+  <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="headingOne">
+      <h4 class="panel-title">
+        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+          Economical
+        </a>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+      <div class="panel-body">
+        <div class="container">
+          <form method="post" action="api">
+            <div class="form-group">
+              <label for="location">Keyword:</label>
+              <input type="input" class="form-control" placeholder="Enter Keyword" name="location">
+            </div>
+            <div class="form-group">
+              <label for="start_date">Start Date:</label>
+              <input type="date" class="form-control" name="start_date"></textarea>
+            </div>
+            <div class="form-group">
+              <label for="end_date">End Date:</label>
+              <input type="date" class="form-control" name="end_date">
+            </div>
+            <button type="submit" class="btn btn-default">Search</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="headingTwo">
+      <h4 class="panel-title">
+        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+          Social
+        </a>
+      </h4>
+    </div>
+    <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+      <div class="panel-body">
+        <div class="container">
+          <form method="post" action="api">
+            <div class="form-group">
+              <label for="location">Keyword:</label>
+              <input type="input" class="form-control" placeholder="Enter Keyword" name="location">
+            </div>
+            <div class="form-group">
+              <label for="start_date">Start Date:</label>
+              <input type="date" class="form-control" name="start_date"></textarea>
+            </div>
+            <div class="form-group">
+              <label for="end_date">End Date:</label>
+              <input type="date" class="form-control" name="end_date">
+            </div>
+            <button type="submit" class="btn btn-default">Search</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="headingThree">
+      <h4 class="panel-title">
+        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+          Environmental
+        </a>
+      </h4>
+    </div>
+    <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+      <div class="panel-body">
+       <div class="container">
+          <form method="post" action="api">
+            <div class="form-group">
+              <label for="location">Keyword:</label>
+              <input type="input" class="form-control" placeholder="Enter Keyword" name="location">
+            </div>
+            <div class="form-group">
+              <label for="start_date">Start Date:</label>
+              <input type="date" class="form-control" name="start_date"></textarea>
+            </div>
+            <div class="form-group">
+              <label for="end_date">End Date:</label>
+              <input type="date" class="form-control" name="end_date">
+            </div>
+            <button type="submit" class="btn btn-default">Search</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+    </body>
+  </html>

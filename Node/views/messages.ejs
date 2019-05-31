@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="icon" href="images/cutler.png">
+        <title>Messages</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+        <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.1.0.min.js"></script>
+        <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+        <script src="/javascripts/myScripts.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        
+        <style type="text/css">
+            .navbar-inverse{
+              background-color: #2b3e50;
+            }
+            .btn-default{
+              background-color: #2b3e50;
+              color:white;
+            }
+            .container-fluid ul.navbar-nav>li>a {
+                color: white;
+            }   
+            .container-fluid ul.navbar-nav>li>a:hover {
+                color: black;
+            }   
+
+            .container {
+              margin-top:50px;
+            }
+
+            .table-responsive{
+              text-align: center;
+            }
+
+            th, li{
+              text-align: center;
+            }
+
+        </style>
+
+        <script>
+          function sortTable(n) {
+              var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+              table = document.getElementById("messagestable");
+              switching = true;
+              // Set the sorting direction to ascending:
+              dir = "asc"; 
+              /* Make a loop that will continue until
+              no switching has been done: */
+              while (switching) {
+                // Start by saying: no switching is done:
+                switching = false;
+                rows = table.rows;
+                /* Loop through all table rows (except the
+                first, which contains table headers): */
+                for (i = 1; i < (rows.length - 1); i++) {
+                  // Start by saying there should be no switching:
+                  shouldSwitch = false;
+                  /* Get the two elements you want to compare,
+                  one from current row and one from the next: */
+                  x = rows[i].getElementsByTagName("TD")[n];
+                  y = rows[i + 1].getElementsByTagName("TD")[n];
+                  /* Check if the two rows should switch place,
+                  based on the direction, asc or desc: */
+                  if (dir == "asc") {
+                    if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                      // If so, mark as a switch and break the loop:
+                      shouldSwitch = true;
+                      break;
+                    }
+                  } else if (dir == "desc") {
+                    if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                      // If so, mark as a switch and break the loop:
+                      shouldSwitch = true;
+                      break;
+                    }
+                  }
+                }
+                if (shouldSwitch) {
+                  /* If a switch has been marked, make the switch
+                  and mark that a switch has been done: */
+                  rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                  switching = true;
+                  // Each time a switch is done, increase this count by 1:
+                  switchcount ++; 
+                } else {
+                  /* If no switching has been done AND the direction is "asc",
+                  set the direction to "desc" and run the while loop again. */
+                  if (switchcount == 0 && dir == "asc") {
+                    dir = "desc";
+                    switching = true;
+                  }
+                }
+              }
+            }
+        </script>
+    </head>    
+      <body>
+        <nav class="navbar navbar-inverse">
+          <div class="container-fluid">
+            <ul class="nav navbar-nav">
+              <li><a href="policies" ><span class="glyphicon glyphicon-wrench"></span> Policies</a></li>
+              <li><a href="steps"><span class="glyphicon glyphicon-list"></span> Steps</a></li>
+              <li><a href="parameters"><span class="glyphicon glyphicon-search"></span> Parameters</a></li>
+              <li style="margin-left: 300px"><img src="images/<%=img %>" style="margin-top:5px; height:40px;" class="img-responsive"></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="users"><span class="glyphicon glyphicon-cog"></span> Users</a></li>
+              <li><a href="profile"><span class="glyphicon glyphicon-user"></span> <%=id %></a></li>
+              <li><a href="logout" onclick="clearLocal()"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+            </ul>
+          </div>
+        </nav>
+
+        <div class="container">
+            <div class="col-md-12">
+              <div class="table-responsive">
+                <table id="messagestable" class="table table-striped table-hover">   
+                  <thead style="cursor:pointer"> 
+                    <th onclick="sortTable(0)">ID</th>
+                    <th onclick="sortTable(1)" style="width:70%">Message</th>
+                    <th onclick="sortTable(2)" style="width:30%">Date</th>    
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                      <td>1</td>
+                      <td>Notification Message Content</td>
+                      <td>Notification Time</td>
+                    </tr>
+                    <tr>
+                      <td>2</td>
+                      <td>Notification Message Content</td>
+                      <td>Notification Time</td>
+                    </tr>
+                    <tr>
+                      <td>3</td>
+                      <td>Notification Message Content</td>
+                      <td>Notification Time</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+  </body>
+</html>
+

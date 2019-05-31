@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="icon" href="images/cutler.png">
+        <title>Policies</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+        <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.1.0.min.js"></script>
+        <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+        <script src="/javascripts/myScripts.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        
+        <style type="text/css">
+            .navbar-inverse{
+              background-color: #2b3e50;
+            }
+            .btn-default{
+              background-color: #2b3e50;
+              color:white;
+            }
+            .container-fluid ul.navbar-nav>li>a {
+                color: white;
+            }   
+            .container-fluid ul.navbar-nav>li>a:hover {
+                color: black;
+            }   
+
+            .container {
+              margin-top:50px;
+            }
+
+            .table-responsive{
+              text-align: center;
+            }
+
+            th, li{
+              text-align: center;
+            }
+
+            #mytable tr > *:nth-child(1) {
+                display: none;
+            }
+        </style>
+
+        <script>
+          window.onload= function (){
+            
+            city=<%- JSON.stringify(city) %>;
+            var socket = io();
+           
+            socket.emit('getuser', {city: city});
+            socket.on('showrows', function(rows) {
+            rows=rows.rows;
+                for (var i=0; i<rows.length; i++) {
+                    var ids = rows[i].ID;
+                    var pol= rows[i].PolicyName;
+                    var fea= rows[i].Features;
+                    var goa= rows[i].Goals;
+                    var act= rows[i].Actions;
+                    var imp= rows[i].Impacts;
+                    var tableBody= document.getElementById("tableOfPolicies");
+
+                    var row = document.createElement("TR");
+
+                    idss= document.createElement("TD");
+                    idss.className="nr";
+                    idss.appendChild(document.createTextNode(ids));
+                    poli= document.createElement("TD");
+                    poli.className="pl";
+                    poli.appendChild(document.createTextNode(pol));
+                    feat= document.createElement("TD");
+                    feat.className="ft";
+                    feat.appendChild(document.createTextNode(fea));
+                    goal= document.createElement("TD");
+                    goal.className="gl";
+                    goal.appendChild(document.createTextNode(goa));
+                    acti= document.createElement("TD");
+                    acti.className="ac";
+                    acti.appendChild(document.createTextNode(act));
+                    impa= document.createElement("TD");
+                    impa.className="im";
+                    impa.appendChild(document.createTextNode(imp));
+
+                    buttons= document.createElement("TD");
+
+                    placeofP= document.createElement("P");
+                    placeofP.title="Select";
+                    placeofP.dataset.placement="top";
+                    btn= document.createElement("BUTTON");
+                    btn.className="btn btn-success btn-xs";
+                    btn.dataset.title="Select";
+                    btn.dataset.toggle="modal";
+                    btn.dataset.target="#select";
+                    spaan= document.createElement("SPAN");
+                    spaan.className="glyphicon glyphicon-arrow-right";
+
+                    btn.appendChild(spaan);
+                    btn.onclick=choose;
+                    placeofP.appendChild(btn);
+                    buttons.appendChild(placeofP);
+
+                    placeofP2= document.createElement("P");
+                    placeofP2.title="Edit";
+                    placeofP2.dataset.placement="top";
+                    btn2= document.createElement("BUTTON");
+                    btn2.id="editbtn"
+                    btn2.className="btn btn-primary btn-xs";
+                    btn2.dataset.title="Edit";
+                    btn2.dataset.toggle="modal";
+                    btn2.dataset.target="#edit";
+                    spaan2= document.createElement("SPAN");
+                    spaan2.className="glyphicon glyphicon-pencil";
+
+                    btn2.appendChild(spaan2);
+                    btn2.onclick=fillEditSpaces;
+                    placeofP2.appendChild(btn2);
+                    buttons.appendChild(placeofP2);
+
+                    placeofP3= document.createElement("P");
+                    placeofP3.title="Delete";
+                    placeofP3.dataset.placement="top";
+                    btn3= document.createElement("BUTTON");
+                    btn3.id="delbtn"
+                    btn3.className="btn btn-danger btn-xs";
+                    btn3.dataset.title="Delete";
+                    btn3.dataset.toggle="modal";
+                    btn3.dataset.target="#delete";
+                    spaan3= document.createElement("SPAN");
+                    spaan3.className="glyphicon glyphicon-trash";
+
+                    btn3.appendChild(spaan3);
+                    btn3.onclick=fillDeleteID;
+                    placeofP3.appendChild(btn3);
+                    buttons.appendChild(placeofP3);
+
+
+
+                    row.appendChild(idss);
+                    row.appendChild(poli);
+                    row.appendChild(feat);
+                    row.appendChild(goal);
+                    row.appendChild(acti);
+                    row.appendChild(impa);
+                    row.appendChild(buttons);
+
+                    tableBody.appendChild(row);
+                }  
+                
+                role=<%- JSON.stringify(role) %>;
+                if(role=="analyzer"){
+                  document.getElementById("delbtn").disabled = true;
+
+                  var editbtns = document.querySelectorAll('[id^="editbtn"]');
+                  for (var i = 0; i < editbtns.length; i++) {
+                      editbtns[i].disabled = true;
+                  }
+
+                  var delbtns = document.querySelectorAll('[id^="delbtn"]');
+                  for (var i = 0; i < delbtns.length; i++) {
+                      delbtns[i].disabled = true;
+                  }
+
+                }
+                if(role=="designer" || role=="analyzer"){
+                  document.getElementById("users").style.visibility = "hidden";
+                }
+
+              });
+
+
+
+            function choose(e) {
+                var $row = $(this).closest("tr");    // Find the row
+                var $text = $row.find(".nr").text(); // Find the text
+                var value=$text;
+                socket.emit('selected',{selectedRow:value});
+                socket.on('loadselectedrows', function(rows) {
+                    rows=rows.rows;
+                    let store=rows[0].PolicyName;
+                    localStorage.setItem('name', store);
+                });    
+                document.location.href = 'steps';
+            };
+
+            function fillDeleteID(e) {
+                var $row = $(this).closest("tr");    // Find the row
+                var $text = $row.find(".nr").text(); // Find the text
+                var value=$text;
+                document.getElementById("deleteID").value=$text;
+            };
+
+            function fillEditSpaces(e) {
+                var $row = $(this).closest("tr");    // Find the row
+                var $id = $row.find(".nr").text();
+                var $pname = $row.find(".pl").text();
+                var $feature = $row.find(".ft").text();
+                var $goal = $row.find(".gl").text(); 
+                var $action = $row.find(".ac").text();
+                var $impact = $row.find(".im").text();
+
+                document.getElementById("idEdit").value=$id;
+                document.getElementById("pnameEdit").value=$pname;
+                document.getElementById("feaEdit").value=$feature;
+                document.getElementById("goalEdit").value=$goal;
+                document.getElementById("actEdit").value=$action;
+                document.getElementById("impEdit").value=$impact;
+            }; 
+          }
+
+          function sortTable(n) {
+              var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+              table = document.getElementById("mytable");
+              switching = true;
+              // Set the sorting direction to ascending:
+              dir = "asc"; 
+              /* Make a loop that will continue until
+              no switching has been done: */
+              while (switching) {
+                // Start by saying: no switching is done:
+                switching = false;
+                rows = table.rows;
+                /* Loop through all table rows (except the
+                first, which contains table headers): */
+                for (i = 1; i < (rows.length - 1); i++) {
+                  // Start by saying there should be no switching:
+                  shouldSwitch = false;
+                  /* Get the two elements you want to compare,
+                  one from current row and one from the next: */
+                  x = rows[i].getElementsByTagName("TD")[n];
+                  y = rows[i + 1].getElementsByTagName("TD")[n];
+                  /* Check if the two rows should switch place,
+                  based on the direction, asc or desc: */
+                  if (dir == "asc") {
+                    if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                      // If so, mark as a switch and break the loop:
+                      shouldSwitch = true;
+                      break;
+                    }
+                  } else if (dir == "desc") {
+                    if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                      // If so, mark as a switch and break the loop:
+                      shouldSwitch = true;
+                      break;
+                    }
+                  }
+                }
+                if (shouldSwitch) {
+                  /* If a switch has been marked, make the switch
+                  and mark that a switch has been done: */
+                  rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                  switching = true;
+                  // Each time a switch is done, increase this count by 1:
+                  switchcount ++; 
+                } else {
+                  /* If no switching has been done AND the direction is "asc",
+                  set the direction to "desc" and run the while loop again. */
+                  if (switchcount == 0 && dir == "asc") {
+                    dir = "desc";
+                    switching = true;
+                  }
+                }
+              }
+            }
+        </script>
+    </head>    
+      <body>
+        <nav class="navbar navbar-inverse">
+          <div class="container-fluid">
+            <ul class="nav navbar-nav">
+              <li><a href="policies" ><span class="glyphicon glyphicon-wrench"></span> Policies</a></li>
+              <li><a href="steps"><span class="glyphicon glyphicon-list"></span> Steps</a></li>
+              <li><a href="parameters"><span class="glyphicon glyphicon-search"></span> Parameters</a></li>
+              <li style="margin-left: 300px"><img src="images/<%=img %>" style="margin-top:5px; height:40px;" class="img-responsive"></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li id="users"><a href="users"><span class="glyphicon glyphicon-cog"></span> Users</a></li>
+              <li><a href="profile"><span class="glyphicon glyphicon-user"></span> <%=id %></a></li>
+              <li><a href="logout" onclick="clearLocal()"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+            </ul>
+          </div>
+        </nav>
+
+        <div class="container">
+          <p style="float:right"><button id="addbtn" class="btn btn-success btn-xs" data-toggle="modal" data-target="#addNew"><span class="glyphicon glyphicon-plus"></span> Add New Policy</button></p>
+            <div class="col-md-12">
+              <div class="table-responsive">
+                <table id="mytable" class="table table-hover table-striped">   
+                  <thead style="cursor:pointer"> 
+                    <th>ID</th>
+                    <th onclick="sortTable(1)">Name</th>
+                    <th onclick="sortTable(2)">Feature</th>
+                    <th onclick="sortTable(3)">Goal</th>
+                    <th onclick="sortTable(4)">Action</th>
+                    <th onclick="sortTable(5)">Impact</th>    
+                    <th>Options</th>
+                  </thead>
+                  <tbody id="tableOfPolicies"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal fade" id="edit" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+                <h4 class="modal-title custom_align" id="Heading">Edit Policy</h4>
+              </div>
+              
+              <div class="modal-body ">
+                <form method="post" action="editPolicy">
+                  <div class="form-group">
+                    <input type="hidden" class="form-control" id="idEdit" name="policyId">
+                  </div>
+                  <div class="form-group">
+                    <label for="policyName">Name:</label>
+                    <input class="form-control" id="pnameEdit" name="policyName" autocomplete="off">
+                  </div>
+                  <div class="form-group">
+                    <label for="feature">Feature:</label>
+                    <textarea class="form-control" id="feaEdit" rows="3" name="feature"></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label for="goal">Goal:</label>
+                    <textarea class="form-control" id="goalEdit" rows="3" name="goal"></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label for="policyAction">Action:</label>
+                    <textarea class="form-control" id="actEdit" rows="3" name="policyAction"></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label for="impact">Impact:</label>
+                    <textarea class="form-control" id="impEdit" rows="3" name="impact"></textarea>
+                  </div>
+                  <button type="submit" class="btn btn-warning btn-lg" style="width: 100%;"><span class="glyphicon glyphicon-ok-sign"></span> Edit</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+     
+        <div class="modal fade" id="delete" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+                  <h4 class="modal-title custom_align" id="Heading">Delete entry</h4>
+              </div>
+              <div class="modal-body">
+                <div class="alert alert-danger"><span class="glyphicon glyphicon-warning-sign"></span> Are you sure you want to delete this policy permanently?</div>
+              </div>
+              <div class="modal-footer ">
+                <form method="post" action="deletePolicy">
+                  <div class="form-group">
+                    <input type="hidden" class="form-control" id="deleteID" placeholder="EnterID" name="policyId">
+                  </div>
+                  <button type="submit" class="btn btn-success" ><span class="glyphicon glyphicon-ok-sign"></span> Yes</button>
+                  <button type="button" class="btn btn-danger" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> No</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal fade" id="addNew" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+                <h4 class="modal-title custom_align" id="Heading">Add New Policy</h4>
+              </div>
+              
+              <div class="modal-body ">
+                <form method="post" action="addPolicy">
+                   <div class="form-group">
+                    <label for="policyName">Name:</label>
+                    <input type="input" class="form-control" placeholder="Enter Name of Policy" name="policyName" autocomplete="off">
+                    <input type="hidden" class="form-control" value="<%=city %>" name="cityName" autocomplete="off">
+                  </div>
+                  <div class="form-group">
+                    <label for="feature">Feature:</label>
+                    <textarea class="form-control" rows="3" placeholder="Enter Feature" name="feature"></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label for="goal">Goal:</label>
+                    <textarea class="form-control" rows="3" placeholder="Enter Goal" name="goal"></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label for="policyAction">Action:</label>
+                    <textarea class="form-control" rows="3"placeholder="Enter Action" name="policyAction"></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label for="impact">Impact:</label>
+                    <textarea class="form-control" rows="3" placeholder="Enter Impact" name="impact"></textarea>
+                  </div>
+                  <button type="submit" class="btn btn-success" style="width: 100%;"><span class="glyphicon glyphicon-plus"></span> Add</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+  </body>
+</html>
+

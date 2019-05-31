@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="icon" href="images/cutler.png">
+        <title>Sign Up</title>
+        <meta charset="utf-8">
+        <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.7.0/css/all.css' integrity='sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ' crossorigin='anonymous'>
+ 
+        
+
+        <style type="text/css">
+            .navList {
+              list-style-type: none;
+              margin: 0;
+              padding: 0;
+              overflow: hidden;
+              background-color: #f9f9f9;
+            }
+
+            li {
+              float: left;
+            }
+
+            li a {
+              display: block;
+              color: #2b3e50;
+              text-align: center;
+              padding: 14px 16px;
+              text-decoration: none;
+            }
+
+            li a:hover {
+              background-color: #2b3e50;
+              color:white;
+            }
+
+            input {
+                float:left;
+                margin-left:2%;
+                padding: 15px 25px;
+                border-radius: 10px;
+                margin-top:5%;
+                border: none;
+            }
+
+        </style>
+        
+        <script></script>
+    </head>    
+    <body style="margin:0; font-size: 1em; line-height: 1.4; font-family:sans-serif; background-color:#2b3e50">
+        <div id="nav" >
+            <ul class="navList">
+             <li><a href="home"><i class='fas fa-home'></i><br> Home</a></li>
+            </ul>
+        </div>
+        <div id="logo" style="background-color: #f9f9f9;">
+            <img src="images/cutler.png" style="margin-top:2%; margin-left: 40%; margin-bottom:5%; width:15%;">
+        </div>
+        <div>
+            <form  method="post" enctype="multipart/form-data" action="upload">
+                <input type = "text" name = "username" placeholder="username" autocomplete="off"  style="margin-left: 30%;">
+                <input type = "password" name = "password" placeholder="password">
+                <input type = "file" name = "filename">
+                <input type = "submit" value = "Sign Up" style="color:white; background-color: #223C86; cursor: pointer;">
+            </form>
+        </div>
+    </body>
+</html>

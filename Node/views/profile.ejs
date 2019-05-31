@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="icon" href="images/cutler.png">
+        <title>Profile</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">      
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script src="/javascripts/myScripts.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+
+        <style type="text/css">
+            .navbar-inverse{
+              background-color: #2b3e50;
+            }
+            .btn-default{
+              background-color: #2b3e50;
+              color:white;
+            }
+            .container-fluid ul.navbar-nav>li>a {
+                color: white;
+            }   
+            .container-fluid ul.navbar-nav>li>a:hover {
+                color: black;
+            }   
+            .container {
+              width:100%;
+            }
+            th, li{
+              text-align: center;
+            }
+
+            .table-responsive{
+              text-align: center;
+            }
+
+            .profile {
+              margin: 20px 0;
+            }
+
+            /* Profile sidebar */
+            .profile-sidebar {
+              padding: 20px 0 10px 0;
+              background: #fff;
+            }
+
+            .profile-userpic img {
+              float: none;
+              margin: 0 auto;
+              width: 50%;
+              height: 50%;
+              -webkit-border-radius: 10% !important;
+              -moz-border-radius: 10% !important;
+              border-radius: 10% !important;
+            }
+
+            .profile-usertitle {
+              text-align: center;
+              margin-top: 20px;
+            }
+
+            .profile-usertitle-name {
+              color: #5a7391;
+              font-size: 16px;
+              font-weight: 600;
+              margin-bottom: 7px;
+            }
+                
+            .profile-usermenu {
+              margin-top: 30px;
+            }
+
+            .profile-usermenu ul li {
+              border-bottom: 1px solid #f0f4f7;
+            }
+
+            .profile-usermenu ul li:last-child {
+              border-bottom: none;
+            }
+
+            .profile-usermenu ul li a {
+              color: #93a3b5;
+              font-size: 14px;
+              font-weight: 400;
+            }
+
+            .profile-usermenu ul li a i {
+              margin-right: 8px;
+              font-size: 14px;
+            }
+
+            .profile-usermenu ul li a:hover {
+              background-color: #fafcfd;
+              color: #5b9bd1;
+            }
+            /* Profile Content */
+            .profile-content, .settings-content {
+              padding: 20px;
+              background: #fff;
+              min-height: 460px;
+            }
+            .navbar-settings-inverse .container-fluid{
+              background-color: #fafcfd;
+            }
+
+        </style>
+        
+        <script>
+          window.onload=function(){
+            $("#help").css("display", "none");
+            $("#B").css("display", "none");
+            $("#C").css("display", "none");
+
+            $("#btn1, #btn2, #btn3").on("click", function(e){
+              e.preventDefault();
+              var target = $(this).data("target");
+              $(".col-md-9").css("display", "none");
+              $("#"+target).css("display", "block");
+            });//click
+
+            $("#btnA, #btnB, #btnC").on("click", function(e){
+              e.preventDefault();
+              var target = $(this).data("target");
+              $(".classA").css("display", "none");
+              $("#"+target).css("display", "block");
+            });//click
+
+            role=<%- JSON.stringify(role) %>;
+            if(role=="designer" || role=="analyzer"){
+                  document.getElementById("users").style.visibility = "hidden";
+                }
+          }     
+        </script>
+    </head>    
+    <body>
+      <nav class="navbar navbar-inverse">
+          <div class="container-fluid">
+            <ul class="nav navbar-nav">
+              <li><a href="policies" ><span class="glyphicon glyphicon-wrench"></span> Policies</a></li>
+              <li><a href="steps"><span class="glyphicon glyphicon-list"></span> Steps</a></li>
+              <li><a href="parameters"><span class="glyphicon glyphicon-search"></span> Parameters</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li id="users"><a href="users"><span class="glyphicon glyphicon-cog"></span> Users</a></li>
+              <li><a href="profile"><span class="glyphicon glyphicon-user"></span> <%=id %></a></li>
+              <li><a href="logout" onclick="clearLocal()"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+            </ul>
+          </div>
+        </nav>
+
+
+      <div class="container">
+    <div class="row profile">
+    <div class="col-md-3">
+      <div class="profile-sidebar">
+        <!-- SIDEBAR USERPIC -->
+        <div class="profile-userpic">
+          <img src="images/<%=img %>" class="img-responsive" alt="">
+        </div>
+        <!-- END SIDEBAR USERPIC -->
+        <!-- SIDEBAR USER TITLE -->
+        <div class="profile-usertitle">
+          <div class="profile-usertitle-name">
+             <%=id %>
+          </div>
+          
+        </div>
+        <!-- END SIDEBAR USER TITLE -->
+        
+        <!-- SIDEBAR MENU -->
+        <div class="profile-usermenu">
+          <ul class="nav">
+            <li>
+              <a id="btn2" href="#" data-target="settings"><i class="glyphicon glyphicon-cog"></i>&nbsp;Settings </a>
+            </li>
+            <li>
+              <a id="btn3" href="#" data-target="help"><i class="glyphicon glyphicon-flag"></i>Help</a>
+            </li>
+          </ul>
+        </div>
+        <!-- END MENU -->
+      </div>
+    </div>
+
+    <div id="settings" class="col-md-9">
+            <div class="settings-content">
+              <nav class="navbar navbar-settings-inverse">
+                <div class="container-fluid">
+                  <ul class="nav navbar-nav">
+                    <li ><a style="color:#93a3b5;" id="btnA" href="#" data-target="A">Change Password</a></li>
+                    <li><a style="color:#93a3b5;" id="btnB" href="#" data-target="B">Change Username</a></li>
+                    <li><a style="color:#93a3b5;" id="btnC" href="#" data-target="C">Change Something</a></li>
+                  </ul>
+                </div>
+              </nav>
+              <div id="A" class="classA">
+                <form method="post" action="changePassword">
+                  <div class="form-group">
+                    <label for="feature">Old Password:</label>
+                    <input type="password" class="form-control"  name="oldpassword" autocomplete="off">
+                  </div>
+                  <div class="form-group">
+                    <label for="feature">New Password:</label>
+                    <input type="password" class="form-control" name="newpassword" autocomplete="off">
+                  </div>
+                  
+                  <button type="submit" class="btn btn-success">Update</button>
+                </form>
+              </div>
+              <div id="B" class="classA">
+                <form method="post" action="changeUsername">
+                  <div class="form-group">
+                    <label for="feature">New Username:</label>
+                    <input type="input" class="form-control"  name="newusername" autocomplete="off">
+                  </div>
+                  <div class="form-group">
+                    <label for="feature">Password:</label>
+                    <input type="password" class="form-control" name="password" autocomplete="off">
+                  </div>
+                  
+                  <button type="submit" class="btn btn-success">Update</button>
+                </form>
+              </div>
+              <div id="C" class="classA">Change anything</div>
+            </div>
+    </div>
+    <div id="help" class="col-md-9">
+            <div class="settings-content">
+         **********Some user help content goes here***********
+            </div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

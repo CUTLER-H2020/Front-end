@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="icon" href="images/cutler.png">
+        <title>Steps</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="/stylesheets/normalize.css">
+        <link rel="stylesheet" href="/stylesheets/main.css">
+        <link rel="stylesheet" href="/stylesheets/jquery.steps.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+        <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+        <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+        <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+        <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/themes/smoothness/jquery-ui.css" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+        <script src="/javascripts/modernizr-2.6.2.min.js"></script>  
+        <script src="/javascripts/jquery.cookie-1.3.1.js"></script>
+        <script src="/javascripts/jquery.steps.js"></script>
+        <script src="/javascripts/myScripts.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+
+        <style type="text/css">
+            .navbar-inverse{
+              background-color: #2b3e50;
+            }
+            .btn-default{
+              background-color: #2b3e50;
+              color:white;
+            }
+            .container-fluid ul.navbar-nav>li>a {
+              color: white;
+            }   
+            .container-fluid ul.navbar-nav>li>a:hover {
+              color: black;
+            }   
+            li{
+              text-align: center;
+            }
+
+            #mytable tr > *:nth-child(4) {
+              display: none;
+            }
+
+            body {
+              overflow-y: scroll;
+              scrollbar-width: none; /* Firefox */
+              -ms-overflow-style: none;  /* IE 10+ */
+            }
+            body::-webkit-scrollbar { /* WebKit */
+              width: 0;
+              height: 0;
+            }
+
+            section {
+              overflow-y: scroll;
+              scrollbar-width: none; /* Firefox */
+              -ms-overflow-style: none;  /* IE 10+ */
+            }
+            section::-webkit-scrollbar { /* WebKit */
+              width: 0;
+              height: 0;
+            }
+            th, tr{
+              text-align: center;
+            }
+
+            #toolbox-tools {
+              width: 30%;
+              height: 300px;
+              overflow: hidden;
+              float:left;
+            }
+
+            .panel-heading {
+              cursor: move;
+            }
+
+            #toggle-toolbox-tools {
+              cursor: pointer;
+            }
+
+            #close-toolbox-tools {
+              cursor: pointer;
+            }
+        </style>
+
+        <script>
+            window.onload=function(){
+              let nameofpolicy = localStorage.getItem('name');
+              if(nameofpolicy==null){
+                alert("You haven't selected any policy")
+                
+              }
+              else{
+                var typeofpolicy = "social";
+                var xmlhttp = new XMLHttpRequest();
+                var url = "http://127.0.0.1:5000/"+typeofpolicy+"/";
+                xmlhttp.onreadystatechange = function() {
+                  if (this.readyState == 4 && this.status == 200) {
+                    var dashboard = this.responseText;
+                    var parsedDashboard = JSON.parse(dashboard);
+                    addTable(parsedDashboard);
+                  }
+                };
+                xmlhttp.open("GET", url, true);
+                xmlhttp.send(); 
+        
+                document.getElementById('policyName').innerHTML = nameofpolicy;
+
+                
+                city=<%- JSON.stringify(city) %>;   
+        
+                var socket = io();
+                socket.emit('getname', {city: city, polname: nameofpolicy});  
+
+                socket.on('loadcontents', function(rows) {
+                  rows=rows.rows;
+                  document.getElementById('iframes-inform').innerHTML=rows[0].c1;
+                  document.getElementById('iframes-analyze').innerHTML=rows[0].c2;
+                  document.getElementById('iframes-monitor').innerHTML=rows[0].c3;
+                  document.getElementById('iframes-evaluate').innerHTML=rows[0].c4;
+                  document.getElementById('iframes-revise').innerHTML=rows[0].c5;
+
+                  var x = document.getElementById("closeButtons");
+                  x.onclick=function(){this.parentNode.parentNode.removeChild(this.parentNode)};
+                });    
+              }
+
+
+              role=<%- JSON.stringify(role) %>;
+
+              if(role=="analyzer"){
+                  document.getElementById("hidden").innerHTML="You are not allowed to visit this step. Please go to next step by clicking the button on the bottom.";
+                }
+
+              if(role=="designer" || role=="analyzer"){
+                  document.getElementById("users").style.visibility = "hidden";
+                }
+              
+            }
+
+            function choice1(){
+                var table = document.getElementById ("mytable");
+                size=table.rows.length;
+                for(i=0; i<size-1; i++){
+                    table.deleteRow (1);
+                }
+              
+                typeofpolicy=document.getElementById("typeSelector").value;
+                if(typeofpolicy=="economical"){
+                  alert("Economical widgets are not working properly. Loading social widgets");
+                  typeofpolicy="social";
+                }
+
+                var xmlhttp = new XMLHttpRequest();
+                var url = "http://127.0.0.1:5000/"+typeofpolicy+"/";
+                xmlhttp.onreadystatechange = function() {
+                  if (this.readyState == 4 && this.status == 200) {
+                    var dashboard = this.responseText;
+                    var parsedDashboard = JSON.parse(dashboard);
+                    addTable(parsedDashboard);
+                  }
+                };
+                xmlhttp.open("GET", url, true);
+                xmlhttp.send(); 
+              }
+
+              
+            function placeIframes(){
+              typeofpolicy=document.getElementById("typeSelector").value;
+
+                if(typeofpolicy=="social"){
+                  var base="http://141.26.209.12:5601";
+                  for(i=0; i<60; i++){
+                      var selectedItems=document.getElementById(i);            
+                      if(selectedItems.checked==true){
+                          var selectedPlace = document.getElementById("List"+i);
+                          var selectedTime = document.getElementById("Time"+i);
+    
+                          var div=document.createElement('div');
+                          div.classList.add("panel");
+                          div.classList.add("panel-primary");
+                          div.classList.add("draggable-panel");
+                          div.classList.add("toolbar-panel");
+                          div.classList.add("ui-draggable");
+                          div.classList.add("ui-resizable");
+                          div.id="toolbox-tools";
+                          div.style.marginRight="2%";
+                          div.style.Float="left";
+
+                          var secdiv=document.createElement('div');
+                          secdiv.classList.add("panel-heading");
+                          secdiv.classList.add("lang-panel-header-tools");
+
+                          var selectedName = document.getElementById("row"+i+"1").innerText;
+                          secdiv.innerHTML=selectedName;
+
+                          var is=document.createElement('i');
+                          is.classList.add("fa");
+                          is.classList.add("fa-times");
+                          is.classList.add("pull-right");
+                          is.classList.add("close-panel");
+                          is.id="toggle-toolbox-tools";
+
+                          var seci=document.createElement('i');
+                          seci.classList.add("fa");
+                          seci.classList.add("pull-right");
+                          seci.id="close-toolbox-tools";
+
+                          var ifrm=document.createElement('iframe');
+                          ifrm.width="100%";
+                          ifrm.height="100%";
+                          ifrm.id="toolbox-tools";
+                          ifrm.id="resizable";
+                          ifrm.classList.add("panel");
+                          ifrm.classList.add("panel-primary");
+                          ifrm.classList.add("draggable-panel");
+                          ifrm.classList.add("toolbar-panel");
+                          ifrm.classList.add("ui-draggable");
+                          ifrm.classList.add("ui-resizable");
+                          getId="row"+i+"3";
+                          gettype="row"+i+"2";
+
+                          var src=base+"/app/kibana#/visualize/edit/"+document.getElementById(getId).innerText+"?embed=true&_g=(refreshInterval%3A(pause%3A!f%2Cvalue%3A900000)%2Ctime%3A(from%3Anow-"+selectedTime.value+"%2Cmode%3Aquick%2Cto%3Anow))";
+
+                          if(document.getElementById(gettype).innerText=="dashboard"){
+                            src="http://141.26.209.12:5601/app/kibana#/dashboard/"+document.getElementById(getId).innerText+"?embed=true&_g=(refreshInterval%3A(pause%3A!f%2Cvalue%3A900000)%2Ctime%3A(from%3Anow-"+selectedTime.value+"%2Cmode%3Aquick%2Cto%3Anow))";
+                          }
+
+                          ifrm.src=src;
+                          secdiv.appendChild(is);
+                          secdiv.appendChild(seci);
+                          div.appendChild(secdiv);
+                          div.appendChild(ifrm);
+                          var place=document.getElementById("iframes-"+selectedPlace.value);
+                          place.appendChild(div);
+                      }
+                  }
+                }
+                
+                else if(typeofpolicy=="environmental"){
+                  for(i=0; i<60; i++){
+                    var selectedItems=document.getElementById(i);
+                      if(selectedItems.checked==true){
+
+                          var selectedPlace = document.getElementById("List"+i);
+                          var selectedTime = document.getElementById("Time"+i);
+                          var div=document.createElement('div');
+                          div.classList.add("panel");
+                          div.classList.add("panel-primary");
+                          div.classList.add("draggable-panel");
+                          div.classList.add("toolbar-panel");
+                          div.classList.add("ui-draggable");
+                          div.classList.add("ui-resizable");
+                          div.id="toolbox-tools";
+                          div.style.marginRight="2%";
+                          div.style.Float="left";
+
+                          var secdiv=document.createElement('div');
+                          secdiv.classList.add("panel-heading");
+                          secdiv.classList.add("lang-panel-header-tools");
+                          
+                          var selectedName = document.getElementById("row"+i+"1").innerText;
+                          secdiv.innerHTML=selectedName;
+
+                          var is=document.createElement('i');
+                          is.classList.add("fa");
+                          is.classList.add("fa-times");
+                          is.classList.add("pull-right");
+                          is.classList.add("close-panel");
+                          is.id="toggle-toolbox-tools";
+
+                          var seci=document.createElement('i');
+                          seci.classList.add("fa");
+                          seci.classList.add("pull-right");
+                          seci.id="close-toolbox-tools";
+
+                          var ifrm=document.createElement('iframe');
+                          ifrm.width="100%";
+                          ifrm.height="100%";
+                          ifrm.id="toolbox-tools";
+                          ifrm.id="resizable";
+                          ifrm.classList.add("panel");
+                          ifrm.classList.add("panel-primary");
+                          ifrm.classList.add("draggable-panel");
+                          ifrm.classList.add("toolbar-panel");
+                          ifrm.classList.add("ui-draggable");
+                          ifrm.classList.add("ui-resizable");
+                          getId="row"+i+"3";
+                          gettype="row"+i+"2";
+
+                          var src="http://159.89.19.241/app/kibana#/visualize/edit/"+document.getElementById(getId).innerText+"?embed=true&_g=(refreshInterval%3A(pause%3A!f%2Cvalue%3A900000)%2Ctime%3A(from%3Anow-"+selectedTime.value+"%2Cmode%3Aquick%2Cto%3Anow))";
+
+                          if(document.getElementById(gettype).innerText=="dashboard"){
+                            src="http://159.89.19.241/app/kibana#/dashboard/"+document.getElementById(getId).innerText+"?embed=true&_g=(refreshInterval%3A(pause%3A!f%2Cvalue%3A900000)%2Ctime%3A(from%3Anow-"+selectedTime.value+"%2Cmode%3Aquick%2Cto%3Anow))";
+                          }
+
+                          ifrm.src=src;
+                          secdiv.appendChild(is);
+                          secdiv.appendChild(seci);
+                          div.appendChild(secdiv);
+                          div.appendChild(ifrm);
+                          var place=document.getElementById("iframes-"+selectedPlace.value);
+                          place.appendChild(div);
+                      }
+                  }
+                }
+                else if(typeofpolicy=="economical"){
+                  for(i=0; i<60; i++){
+                    var selectedItems=document.getElementById(i);
+                    if(selectedItems.checked==true){
+                        var selectedPlace = document.getElementById("List"+i);
+                        var selectedTime = document.getElementById("Time"+i);
+                        var divv= document.createElement("div");
+                        divv.style.border="2px solid";
+                        divv.style.width="100%";
+                        divv.style.resize="both";
+                        divv.style.overflow="auto";
+                        divv.style.float="left";
+                        divv.style.marginLeft="1%";
+                        var ifrm = document.createElement("iframe");
+                        ifrm.width='100%';
+                        ifrm.height='100%';
+                        getId="row"+i+"3";
+                        gettype="row"+i+"2";
+                        var src="http://192.168.32.121:5601/app/kibana#/visualize/edit/"+document.getElementById(getId).innerText+"?embed=true&_g=(refreshInterval%3A(pause%3A!f%2Cvalue%3A900000)%2Ctime%3A(from%3Anow-"+selectedTime.value+"%2Cmode%3Aquick%2Cto%3Anow))";
+                        if(document.getElementById(gettype).innerText=="dashboard"){
+                          src="http://192.168.32.121:5601/app/kibana#/dashboard/"+document.getElementById(getId).innerText+"?embed=true&_g=(refreshInterval%3A(pause%3A!f%2Cvalue%3A900000)%2Ctime%3A(from%3Anow-"+selectedTime.value+"%2Cmode%3Aquick%2Cto%3Anow))";
+                        }
+                        
+                        ifrm.setAttribute("src",src);
+
+                        var deletePart= document.createElement("A");
+                          deletePart.onclick = function(){this.parentNode.parentNode.removeChild(this.parentNode)};
+                          deletePart.innerHTML="Delete"
+
+                        var place= document.getElementById("iframes-"+selectedPlace.value);
+                        divv.appendChild(deletePart);
+                        divv.appendChild(ifrm);
+                        place.appendChild(divv);
+                    }
+                  }
+                }
+
+                var content1 =document.getElementById('iframes-inform').innerHTML;
+                var content2 =document.getElementById('iframes-analyze').innerHTML;
+                var content3 =document.getElementById('iframes-monitor').innerHTML;
+                var content4 =document.getElementById('iframes-evaluate').innerHTML;
+                var content5 =document.getElementById('iframes-revise').innerHTML;
+          
+                city=<%- JSON.stringify(city) %>;   
+                var polname=document.getElementById('policyName').innerHTML;
+                var socket = io();  
+
+                socket.emit('getcontent', {city: city, c1: content1, c2: content2, c3: content3, c4: content4, c5: content5, polname: polname});
+            };
+
+            function saveContents(){
+                var content1 =document.getElementById('iframes-inform').innerHTML;
+                var content2 =document.getElementById('iframes-analyze').innerHTML;
+                var content3 =document.getElementById('iframes-monitor').innerHTML;
+                var content4 =document.getElementById('iframes-evaluate').innerHTML;
+                var content5 =document.getElementById('iframes-revise').innerHTML;
+          
+                city=<%- JSON.stringify(city) %>;   
+                var polname=document.getElementById('policyName').innerHTML;
+                var socket = io();  
+
+                socket.emit('getcontent', {city: city, c1: content1, c2: content2, c3: content3, c4: content4, c5: content5, polname: polname});
+            }
+
+            $(document).ready(function() {
+
+              $(document).on("click", "#toolbox-tools", function(){
+                $(this).draggable({
+                  handle: ".panel-heading",
+                  stop: function(evt, el) {
+                  }
+                });
+              })
+              $(document).on("click", "#toolbox-tools", function(){
+                $(this).resizable({
+                  handles: "e, w, s, se",
+                  stop: function(evt, el) {
+                  }
+                });    
+              })
+
+              $(document).on("click", ".close-panel", function(){
+                $(this).parent().parent().remove();
+              });
+              
+            });
+        </script>
+    </head>
+
+    <body>
+        <nav class="navbar navbar-inverse">
+          <div class="container-fluid">
+            <ul class="nav navbar-nav">
+              <li><a href="policies" ><span class="glyphicon glyphicon-wrench"></span> Policies</a></li>
+              <li><a href="steps"><span class="glyphicon glyphicon-list"></span> Steps</a></li>
+              <li><a href="parameters"><span class="glyphicon glyphicon-search"></span> Parameters</a></li>
+              <li style="margin-left: 300px"><img src="images/<%=img %>" style="margin-top:5px; height:40px;" class="img-responsive"></li>
+
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li id="users"><a href="users"><span class="glyphicon glyphicon-cog"></span> Users</a></li>
+              <li><a href="profile"><span class="glyphicon glyphicon-user"></span> <%=id %></a></li>
+              <li><a href="logout" onclick="clearLocal()"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+            </ul>
+          </div>
+        </nav>
+
+        <div class="content" style="margin-top:10px;">
+          <p id="policyName" style="float:left; margin-left:25%; color:#2b3e50; width:50%; height:5%;  text-align:center; font-weight: bold; font-size:15px;"></p>
+            <button style="float:right; margin-right:1%; width:15.5%; height: 30px; font-size: 15px;" class="btn btn-success btn-xs" onclick="saveContents();">Save Changes</button>
+            <form>     
+                <div id="wizard">
+                    <h2>Widgets</h2>
+                    <section id="hidden" class="section" style="height: -webkit-fill-available; overflow: scroll; width: 100%; font-size: 15px;">
+
+                      <select id="typeSelector" onchange="choice1()" style="float:left; margin-left:1%; width:15%; border-radius:5px; height: 5%;">
+                        <option value="social">Social</option>
+                        <option value="environmental">Environmental</option>
+                        <option value="economical">Economical</option>
+                      </select>
+                        
+
+                        <button type="button" style="float:right;  width:18%; height:5%; font-size: 15px;" class="btn btn-success btn-xs" onclick="placeIframes();">Post Widgets</button><br>
+
+                        <div id="metric_results" style="float:left; width: 100%;">
+                          <div class="table-responsive">
+                            <table id="mytable" class="table table-striped table-hover">   
+                              <thead style="cursor:pointer; color:#2b3e50;"> 
+                                <th onclick="sortTable(0)">Dashboard</th>
+                                <th onclick="sortTable(1)">Title</th>
+                                <th onclick="sortTable(2)">Type</th>
+                                <th>ID</th>
+                                <th>Check</th>
+                                <th>Place</th>    
+                                <th>Time</th>
+                              </thead>
+                              <tbody style="background-color: white; color:teal; " id="tableOfWidgets"></tbody>
+                            </table>
+                          </div>
+                        </div>
+                    </section>
+
+                    <h2>Inform</h2>
+                    <section style="height: -webkit-fill-available; overflow: scroll;">
+                        <div id="iframes-inform"></div>
+                    </section>
+
+                    <h2>Analyze</h2>
+                    <section style="height:-webkit-fill-available; overflow: scroll">
+                        <div id="iframes-analyze"></div>
+                    </section>
+
+                    <h2>Monitor</h2>
+                    <section style="height: -webkit-fill-available; overflow: scroll;">
+                        <div id="iframes-monitor"></div>
+                    </section>
+
+                    <h2>Evaluate</h2>
+                    <section style="height: -webkit-fill-available; overflow: scroll;">
+                        <div id="iframes-evaluate"></div>
+                    </section>
+
+                    <h2>Revise</h2>
+                    <section style="height: -webkit-fill-available; overflow: scroll;">
+                        <div id="iframes-revise"></div>
+                    </section>
+                </div>
+            </form>
+        </div>
+    </body>
+</html>

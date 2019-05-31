@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="icon" href="images/cutler.png">
+        <title>Steps</title>
+        <meta charset="utf-8">
+        <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+
+<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/themes/smoothness/jquery-ui.css" />
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
+
+        <style type="text/css">
+            .navbar-inverse{
+              background-color: #2b3e50;
+            }
+            .btn-default{
+              background-color: #2b3e50;
+              color:white;
+            }
+            .container-fluid ul.navbar-nav>li>a {
+                color: white;
+            }   
+            .container-fluid ul.navbar-nav>li>a:hover {
+                color: black;
+            }   
+
+            #toolbox-tools {
+    width: 660px;
+  height: 460px;
+  overflow: hidden;
+}
+
+.group-handle {
+  height: 34px;
+  width: 10px;
+  cursor: move;
+}
+
+.panel-heading {
+    cursor: move;
+}
+
+.draggable-group {
+  float: left;
+}
+
+#sortable {
+  padding: 0px;
+}
+
+#sort-holder {
+  display: none;
+}
+
+#toggle-toolbox-tools {
+    cursor: pointer;
+}
+
+#close-toolbox-tools {
+  cursor: pointer;
+}
+
+.toggle-button-group {
+    cursor: pointer;
+}
+
+.draggable-group {
+    overflow: hidden;
+}
+
+.minimized {
+    width: 12px;
+    height: 36px;
+}
+
+        </style>
+
+        <script>
+          function asd(){
+            var div=document.createElement('div');
+            div.classList.add("panel");
+            div.classList.add("panel-primary");
+            div.classList.add("draggable-panel");
+            div.classList.add("toolbar-panel");
+            div.classList.add("ui-draggable");
+            div.classList.add("ui-resizable");
+            div.id="toolbox-tools";
+
+            var secdiv=document.createElement('div');
+            secdiv.classList.add("panel-heading");
+            secdiv.classList.add("lang-panel-header-tools");
+            secdiv.innerHTML="Name of Widget";
+
+            var i=document.createElement('i');
+            i.classList.add("fa");
+            i.classList.add("fa-times");
+            i.classList.add("pull-right");
+            i.classList.add("close-panel");
+            i.id="toggle-toolbox-tools";
+
+            var seci=document.createElement('i');
+            seci.classList.add("fa");
+            seci.classList.add("pull-right");
+            seci.id="close-toolbox-tools";
+
+            var ifrm=document.createElement('iframe');
+            ifrm.width="100%";
+            ifrm.height="100%";
+            ifrm.id="toolbox-tools";
+            ifrm.id="resizable";
+            ifrm.classList.add("panel");
+            ifrm.classList.add("panel-primary");
+            ifrm.classList.add("draggable-panel");
+            ifrm.classList.add("toolbar-panel");
+            ifrm.classList.add("ui-draggable");
+            ifrm.classList.add("ui-resizable");
+            ifrm.src="http://192.168.32.121:5601/app/kibana#/visualize/edit/b7857bc0-7576-11e9-bb3f-9f493d4ee1e3?embed=true&_g=(refreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow-5y%2Cto%3Anow))";
+
+            secdiv.appendChild(i);
+            secdiv.appendChild(seci);
+            div.appendChild(secdiv);
+            div.appendChild(ifrm);
+
+            var place=document.getElementById('asdasd');
+            place.appendChild(div);
+           
+          }
+             $(document).ready(function() {
+
+              // Add drag and resize option to panel
+              $(document).on("click","#toolbox-tools",function(){
+                $(this).draggable({
+                  handle: ".panel-heading",
+                  stop: function(evt, el) {
+                      // Save size and position in cookie
+                      /*
+                      $.cookie($(evt.target).attr("id"), JSON.stringify({
+                          "el": $(evt.target).attr("id"),
+                          "left": el.position.left,
+                          "top": el.position.top,
+                          "width": $(evt.target).width(),
+                          "height": $(evt.target).height()
+                      }));
+                      */
+                  }
+              });
+              })
+              $(document).on("click","#toolbox-tools",function(){
+                $(this).resizable({
+                  handles: "e, w, s, se",
+                  stop: function(evt, el) {
+                      // Save size and position in cookie
+                      /*
+                      $.cookie($(evt.target).attr("id"), JSON.stringify({
+                          "el": $(evt.target).attr("id"),
+                          "left": el.position.left,
+                          "top": el.position.top,
+                          "width": el.size.width,
+                          "height": el.size.height
+                      }));
+                      */
+                  }
+              });    
+              })
+
+              // Close thr panel
+              $('.close-panel').on("click", function() {
+                $(this).parent().parent().hide();
+            });
+              
+          });
+        </script>
+    </head>
+
+    <body>
+        <nav class="navbar navbar-inverse">
+          <div class="container-fluid">
+            <ul class="nav navbar-nav">
+              <li><a href="policies" ><span class="glyphicon glyphicon-wrench"></span> Policies</a></li>
+              <li><a href="steps"><span class="glyphicon glyphicon-list"></span> Steps</a></li>
+              <li><a href="search"><span class="glyphicon glyphicon-search"></span> Search</a></li>
+              <li style="margin-left: 300px"><img src="images/<%=img %>" style="margin-top:5px; height:40px;" class="img-responsive"></li>
+
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="profile"><span class="glyphicon glyphicon-user"></span> <%=id %></a></li>
+              <li><a href="home" onclick="clearLocal()"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+            </ul>
+          </div>
+        </nav>
+        <button onclick="asd();">Hi</button>
+        <div class="panel panel-primary draggable-panel toolbar-panel ui-draggable ui-resizable" id="toolbox-tools">
+          <div class="panel-heading lang-panel-header-tools">Name of Widget<i class="fa fa-times pull-right close-panel" id="close-toolbox-tools"></i><i class="fa pull-right" id="toggle-toolbox-tools"></i></div>
+          <iframe  width="100%" height="100%" style="height:100%;width:100%" id="toolbox-tools" id="resizable" class="resizable" class="panel panel-primary draggable-panel toolbar-panel ui-draggable ui-resizable" src="http://192.168.32.121:5601/app/kibana#/visualize/edit/b7857bc0-7576-11e9-bb3f-9f493d4ee1e3?embed=true&_g=(refreshInterval%3A(pause%3A!t%2Cvalue%3A0)%2Ctime%3A(from%3Anow-5y%2Cto%3Anow))"></iframe>
+        </div>
+        <div id="asdasd"></div>
+
+    </body>
+</html>
