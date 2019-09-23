@@ -18,6 +18,7 @@ The main responsibility of the designer is to select and place the relevant widg
 Analyzer:
 The main responsibility of the analyzer is to analyze the selected widgets and draw conclusions.
 
+
 You can reach the User Manual from the following link: 
 https://www.cutler-h2020.eu/download/668
 
