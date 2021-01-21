@@ -22,7 +22,7 @@
     "mysql-events": "0.0.11",
     "popup": "0.0.3",
     "popups": "^1.1.3",
-    "socket.io": "^2.2.0",
+    "socket.io": "^2.4.0",
     "zongji": "^0.4.7"
   }
 }
